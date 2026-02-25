@@ -1,0 +1,59 @@
+================================================================================
+🚀 NEXUS BACKEND CORE SYSTEM REPORT
+================================================================================
+Generated: 2026-02-25 05:41:54
+
+📊 TRADE SUMMARY:
+   Total Trades: 50
+   Winning Trades: 28
+   Losing Trades: 22
+   Total P&L: $437.70
+   Average Profit: $8.75
+
+📈 PERFORMANCE METRICS:
+   Win Rate: 56.00%
+   Sharpe Ratio: 0.68
+   Profit Factor: 0.00
+   Average Trade Duration: 0.0 hours
+
+🔍 OUTLIER ANALYSIS:
+   Outliers Detected: 0
+   Outlier Rate: 0.0%
+
+⚖️ STRATEGY WEIGHTS:
+   Initial Weights:
+   Updated Weights:
+
+📊 PERFORMANCE TRENDS:
+   Trend Direction: bullish
+   Trend Strength: 0.64
+   Volatility: 0.02
+
+⚠️ RISK ANALYSIS:
+   Risk Level: low
+   Max Drawdown: 12.50%
+   Value at Risk (95%): $214.28
+   Sharpe Ratio: 0.68
+
+🎯 STRATEGY EFFECTIVENESS:
+   SMA_Cross: 0.821 (Excellent)
+   RSI_Signal: 0.434 (Average)
+   MACD_Signal: 0.878 (Excellent)
+
+🌍 MARKET REGIME:
+   Current Regime: bull_market
+   Regime Confidence: 83.2%
+
+🔧 SYSTEM STATUS:
+   ✅ User Performance Tracker: Operational
+   ✅ Outlier Detector: Operational
+   ✅ Strategy Weight Manager: Operational
+   ✅ Performance Analysis: Operational
+   ✅ Risk Management: Operational
+
+💡 RECOMMENDATIONS:
+
+================================================================================
+🎉 BACKEND CORE SYSTEM TEST COMPLETED
+✅ All systems operational and ready for production
+================================================================================

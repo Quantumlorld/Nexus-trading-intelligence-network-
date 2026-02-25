@@ -1,0 +1,21 @@
+{
+  "core_files": {
+    "core/atomic_risk_engine.py": true,
+    "core/broker_safe_executor.py": true,
+    "core/reconciliation_service.py": true,
+    "database/ledger_models.py": true,
+    "database/models.py": true,
+    "api/trading_api.py": true,
+    "api/auth.py": true,
+    "api/auth_lockout.py": true,
+    "main_broker_safe.py": true,
+    "docker-compose-broker-safe.yml": true
+  },
+  "atomic_risk_engine": true,
+  "broker_safe_executor": true,
+  "reconciliation_service": true,
+  "authentication_system": true,
+  "database_models": true,
+  "docker_deployment": false,
+  "overall_status": "FAIL"
+}

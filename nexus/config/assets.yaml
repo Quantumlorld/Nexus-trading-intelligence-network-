@@ -1,0 +1,96 @@
+# Nexus Trading System - Asset Configuration
+assets:
+  XAUUSD:
+    symbol: "XAUUSD"
+    name: "Gold"
+    sessions:
+      london:
+        start: "08:00"
+        end: "17:00"
+        timezone: "UTC"
+      new_york:
+        start: "13:00"
+        end: "22:00"
+        timezone: "UTC"
+    avoid_periods:
+      - start: "22:00"
+        end: "01:00"
+        reason: "Low liquidity"
+      - start: "17:00"
+        end: "18:00"
+        reason: "Session overlap end"
+    min_volatility: 0.5
+    max_spread: 5.0
+    lot_size: 0.01
+    point_value: 100
+    
+  EURUSD:
+    symbol: "EURUSD"
+    name: "Euro/US Dollar"
+    sessions:
+      london:
+        start: "08:00"
+        end: "17:00"
+        timezone: "UTC"
+      new_york:
+        start: "13:00"
+        end: "22:00"
+        timezone: "UTC"
+    avoid_periods:
+      - start: "22:00"
+        end: "01:00"
+        reason: "Low liquidity"
+    min_volatility: 0.3
+    max_spread: 3.0
+    lot_size: 0.01
+    point_value: 100000
+    
+  DXY:
+    symbol: "USDX"
+    name: "US Dollar Index"
+    sessions:
+      london:
+        start: "08:00"
+        end: "17:00"
+        timezone: "UTC"
+      new_york:
+        start: "13:00"
+        end: "22:00"
+        timezone: "UTC"
+    avoid_periods:
+      - start: "22:00"
+        end: "01:00"
+        reason: "Low liquidity"
+    min_volatility: 0.2
+    max_spread: 2.0
+    lot_size: 0.01
+    point_value: 1000
+    
+  BTC:
+    symbol: "BTCUSD"
+    name: "Bitcoin"
+    sessions:
+      - start: "00:00"
+        end: "23:59"
+        timezone: "UTC"
+    avoid_periods: []
+    min_volatility: 1.0
+    max_spread: 10.0
+    lot_size: 0.01
+    point_value: 1
+
+timeframes:
+  - "9H"
+  - "6H" 
+  - "3H"
+  - "1H"
+  - "15M"
+  - "5M"
+
+default_settings:
+  max_trades_per_day:
+    "9H": 2
+    "6H": 2
+    "3H": 1
+  one_active_trade_per_asset: true
+  session_filter_enabled: true

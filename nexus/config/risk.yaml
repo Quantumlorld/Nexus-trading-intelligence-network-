@@ -1,0 +1,66 @@
+# Nexus Trading System - Risk Management Configuration
+risk_management:
+  position_sizing:
+    default_risk_percent: 1.0  # 1% per trade
+    max_risk_percent: 2.0
+    dollar_override_enabled: true
+    default_dollar_risk: 100.0
+    max_dollar_risk: 500.0
+    
+  daily_limits:
+    max_daily_loss: 9.99  # Maximum daily loss in dollars
+    max_daily_trades: 5   # Maximum total trades per day
+    daily_loss_reset_time: "00:00"  # UTC time to reset daily loss
+    
+  stop_loss:
+    default_sl_points: 300  # -$3 default (in points)
+    min_sl_points: 100
+    max_sl_points: 500
+    sl_buffer_percent: 0.1   # 10% buffer above calculated SL
+    
+  take_profit:
+    default_tp_points: 990  # +$9.9 default (in points)
+    min_tp_points: 200
+    max_tp_points: 2000
+    tp_rr_ratio: 3.3  # Risk/Reward ratio (TP/SL)
+    
+  dynamic_management:
+    lock_profit_threshold: 300  # Lock SL to +$3 when trade moves +$3
+    extend_tp_threshold: 990    # Extend TP to +$15 when original TP hit
+    runner_mode_enabled: true
+    runner_extension_factor: 2.0  # Extend TP further in strong momentum
+    
+  portfolio_risk:
+    max_open_positions: 3
+    max_correlated_positions: 2
+    correlation_threshold: 0.7
+    max_portfolio_heat: 3.0  # Max total risk % across all positions
+    
+  volatility_filter:
+    enabled: true
+    min_volatility_threshold: 0.5
+    max_volatility_threshold: 5.0
+    volatility_lookback: 20
+    atr_multiplier: 2.0
+    
+  liquidity_filter:
+    enabled: true
+    min_spread_threshold: 1.0
+    max_spread_threshold: 10.0
+    slippage_tolerance: 5.0
+    liquidity_check_timeframes: ["1H", "15M"]
+    
+  kill_switch:
+    enabled: true
+    max_consecutive_losses: 3
+    max_drawdown_percent: 5.0
+    emergency_stop_all: true
+    auto_restart_after_minutes: 60
+    
+  risk_metrics:
+    calculate_sharpe: true
+    calculate_sortino: true
+    calculate_calmar: true
+    calculate_max_drawdown: true
+    track_win_rate: true
+    track_avg_win_loss: true

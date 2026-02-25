@@ -1,0 +1,180 @@
+# Nexus Trading System - Broker Safe Edition
+# Production-ready Docker Compose with ledger and reconciliation
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database with Ledger Schema
+  postgres:
+    image: postgres:15-alpine
+    container_name: nexus-postgres-broker-safe
+    environment:
+      POSTGRES_DB: nexus_trading
+      POSTGRES_USER: nexus_user
+      POSTGRES_PASSWORD: nexus_password
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./database/init_atomic.sql:/docker-entrypoint-initdb.d/02-atomic.sql:ro
+      - ./database/init_ledger.sql:/docker-entrypoint-initdb.d/03-ledger.sql:ro
+    ports:
+      - "5432:5432"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nexus_user -d nexus_trading"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Redis Cache for reconciliation and alerts
+  redis:
+    image: redis:7-alpine
+    container_name: nexus-redis-broker-safe
+    command: redis-server --appendonly yes --requirepass redis_password
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  # Nexus Trading Backend - Broker Safe Edition
+  nexus-backend-broker-safe:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-backend-broker-safe
+    env_file:
+      - .env
+    environment:
+      # Override for broker-safe edition
+      NEXUS_EDITION: "BROKER_SAFE"
+      RECONCILIATION_INTERVAL: "60"
+      MAX_SLIPPAGE_PERCENT: "0.5"
+      MAX_DISCREPANCY_THRESHOLD: "1000.0"
+      MAX_CONSECUTIVE_FAILURES: "3"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    volumes:
+      # Mount logs for persistence
+      - ./logs:/app/logs
+      # Mount configuration
+      - ./config:/app/config
+
+  # Nginx Reverse Proxy for Production
+  nginx:
+    image: nginx:alpine
+    container_name: nexus-nginx-broker-safe
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - nexus-backend-broker-safe
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Prometheus Monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: nexus-prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=200h'
+      - '--web.enable-lifecycle'
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # Grafana Dashboard
+  grafana:
+    image: grafana/grafana:latest
+    container_name: nexus-grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: admin_password
+      GF_USERS_ALLOW_SIGN_UP: false
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+  # AlertManager for Alerts
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: nexus-alertmanager
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    ports:
+      - "9093:9093"
+    networks:
+      - nexus-network
+    restart: unless-stopped
+    profiles:
+      - monitoring
+
+networks:
+  nexus-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  alertmanager_data:
+    driver: local

@@ -1,0 +1,93 @@
+# Nexus Trading System - ML Model Configuration
+ml_models:
+  enabled: false  # Can be toggled for rule-based trading
+  
+  feature_engineering:
+    price_features:
+      - "returns"
+      - "log_returns"
+      - "price_change_pct"
+      - "high_low_ratio"
+      - "open_close_ratio"
+    
+    technical_features:
+      - "rsi"
+      - "macd"
+      - "bollinger_position"
+      - "atr"
+      - "ema_crossover_signal"
+      - "volume_profile"
+    
+    time_features:
+      - "hour_of_day"
+      - "day_of_week"
+      - "month_of_year"
+      - "session_indicator"
+    
+    volatility_features:
+      - "realized_volatility"
+      - "garch_volatility"
+      - "volatility_regime"
+    
+    lookback_periods:
+      short: 10
+      medium: 50
+      long: 200
+    
+  neural_network:
+    architecture: "LSTM"
+    hidden_layers: [128, 64, 32]
+    dropout_rate: 0.2
+    activation: "relu"
+    output_activation: "sigmoid"
+    
+    training:
+      batch_size: 32
+      epochs: 100
+      learning_rate: 0.001
+      validation_split: 0.2
+      early_stopping_patience: 10
+    
+    optimization:
+      optimizer: "Adam"
+      loss_function: "binary_crossentropy"
+      metrics: ["accuracy", "precision", "recall"]
+    
+  ensemble:
+    enabled: true
+    models:
+      - "lstm_classifier"
+      - "gradient_boost"
+      - "random_forest"
+    voting_method: "weighted"
+    confidence_threshold: 0.7
+    
+  signal_processing:
+    min_confidence: 0.6
+    max_signals_per_candle: 1
+    signal_decay_factor: 0.9
+    confirmation_required: true
+    
+  model_validation:
+    cross_validation_folds: 5
+    walk_forward_enabled: true
+    out_of_sample_ratio: 0.2
+    min_samples_per_class: 100
+    
+  probability_scoring:
+    enabled: false  # Disabled by default for deterministic behavior
+    score_threshold: 0.75
+    position_sizing_adjustment: true
+    risk_adjustment_factor: 1.5
+    
+  monitoring:
+    track_prediction_accuracy: true
+    drift_detection_enabled: true
+    retraining_interval_days: 30
+    performance_degradation_threshold: 0.1
+    
+  data_requirements:
+    min_history_days: 365
+    update_frequency: "1H"
+    quality_checks: true
+    outlier_detection: true

@@ -1,0 +1,62 @@
+# Nexus Trading System - Execution Configuration
+execution:
+  broker:
+    platform: "MetaTrader5"
+    account_type: "demo"  # demo or live
+    server: "MetaQuotes-Demo"
+    login: 0
+    password: ""
+    timeout_seconds: 30
+    retry_attempts: 3
+    retry_delay_ms: 1000
+    
+  order_management:
+    order_type: "market"  # market or pending
+    fill_policy: "IOC"  # Immediate or Cancel
+    slippage_tolerance: 5.0
+    max_execution_time_ms: 5000
+    partial_fill_handling: "reject"
+    
+  position_management:
+    one_active_per_asset: true
+    max_position_size: 1.0
+    position_size_increment: 0.01
+    auto_reduce_on_risk_breach: true
+    
+  session_filters:
+    enabled: true
+    check_before_execution: true
+    close_on_session_end: false
+    session_buffer_minutes: 15
+    
+  order_validation:
+    check_margin: true
+    check_lot_size: true
+    check_spread: true
+    check_liquidity: true
+    check_volatility: true
+    
+  error_handling:
+    retry_on_timeout: true
+    retry_on_rejection: false
+    log_all_errors: true
+    emergency_exit_on_critical: true
+    
+  monitoring:
+    track_execution_latency: true
+    track_fill_quality: true
+    track_slippage: true
+    alert_on_failures: true
+    
+  safety_checks:
+    pre_trade_validation: true
+    post_trade_verification: true
+    position_sync_check: true
+    balance_check_interval: 300  # seconds
+    
+  mt5_specific:
+    symbol_info_refresh: true
+    tick_data_subscription: true
+    order_comment_prefix: "NEXUS_"
+    magic_number: 123456
+    deviation_points: 10
