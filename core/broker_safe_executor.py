@@ -1,3 +1,28 @@
+
+# Global trade execution lock
+trade_lock = asyncio.Lock()
+
+
+
+from contextlib import asynccontextmanager
+import asyncio
+from typing import AsyncGenerator
+
+@asynccontextmanager
+async def database_transaction() -> AsyncGenerator:
+    """Database transaction context manager for atomic operations"""
+    async with get_database_session() as session:
+        transaction = await session.begin()
+        try:
+            yield session
+            await transaction.commit()
+        except Exception as e:
+            await transaction.rollback()
+            raise e
+        finally:
+            await session.close()
+
+
 """
 Nexus Trading System - Broker-Safe Trade Executor
 Production-ready execution with ledger and reconciliation integration
@@ -19,6 +44,8 @@ from database.ledger_models import (
 from core.atomic_risk_engine import atomic_risk_engine
 from execution.mt5_bridge import MT5Bridge
 from config.settings import settings
+from core.system_control import system_control_manager
+from core.operational_metrics import operational_metrics
 
 logger = logging.getLogger(__name__)
 
@@ -50,8 +77,56 @@ class BrokerSafeExecutor:
         start_time = datetime.utcnow()
         
         try:
+            # PHASE 1: GLOBAL EMERGENCY KILL SWITCH CHECK
+            if not await system_control_manager.is_trading_enabled():
+                operational_metrics.record_trade_execution(
+                    (datetime.utcnow() - start_time).total_seconds(),
+                    False
+                )
+                return {
+                    'success': False,
+                    'error': 'Trading is currently disabled by system control',
+                    'trade_uuid': trade_uuid,
+                    'trading_enabled': False
+                }
+            
+            # Server-side idempotency check
+            if not trade_uuid:
+                operational_metrics.record_trade_execution(
+                    (datetime.utcnow() - start_time).total_seconds(),
+                    False
+                )
+                return {
+                    'success': False,
+                    'error': 'Trade UUID is required for idempotency',
+                    'trade_uuid': None
+                }
+            
+            # Check for existing trade with same UUID
+            with next(get_database_session()) as db:
+                existing_trade = db.query(TradeLedger).filter(
+                    TradeLedger.trade_uuid == trade_uuid
+                ).first()
+                
+                if existing_trade:
+                    operational_metrics.record_trade_execution(
+                        (datetime.utcnow() - start_time).total_seconds(),
+                        False
+                    )
+                    return {
+                        'success': False,
+                        'error': f'Duplicate trade submission: {trade_uuid}',
+                        'trade_uuid': trade_uuid,
+                        'existing_status': existing_trade.status.value,
+                        'existing_ledger_id': existing_trade.id
+                    }
+            
             # Check if trading is enabled
             if not await self._is_trading_enabled():
+                operational_metrics.record_trade_execution(
+                    (datetime.utcnow() - start_time).total_seconds(),
+                    False
+                )
                 return {
                     'success': False,
                     'error': 'Trading is currently disabled',
@@ -61,6 +136,10 @@ class BrokerSafeExecutor:
             # Get live broker balance for risk validation
             broker_balance = await self._get_broker_balance(user_id)
             if broker_balance is None:
+                operational_metrics.record_trade_execution(
+                    (datetime.utcnow() - start_time).total_seconds(),
+                    False
+                )
                 return {
                     'success': False,
                     'error': 'Failed to fetch broker balance',
@@ -75,6 +154,10 @@ class BrokerSafeExecutor:
                 )
                 
                 if not validation.is_allowed:
+                    operational_metrics.record_trade_execution(
+                        (datetime.utcnow() - start_time).total_seconds(),
+                        False
+                    )
                     return {
                         'success': False,
                         'error': f"Risk validation failed: {', '.join(validation.reasons)}",

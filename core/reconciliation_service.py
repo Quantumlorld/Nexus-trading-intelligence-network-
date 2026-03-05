@@ -1,3 +1,8 @@
+
+# Reconciliation operation lock
+reconciliation_lock = asyncio.Lock()
+
+
 """
 Nexus Trading System - Reconciliation Service
 Production-ready reconciliation with automated discrepancy detection

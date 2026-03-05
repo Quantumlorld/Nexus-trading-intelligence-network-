@@ -1,0 +1,21 @@
+2026-03-01 01:24:38,563 - asyncio - DEBUG - Using proactor: IocpProactor
+2026-03-01 01:24:38,568 - __main__ - INFO - === PHASE 1: GLOBAL EMERGENCY KILL SWITCH TEST ===
+2026-03-01 01:24:38,956 - __main__ - ERROR - Failed to get trading state: No module named 'email.message'
+2026-03-01 01:24:38,957 - __main__ - INFO - Initial trading state: False
+2026-03-01 01:24:38,975 - __main__ - ERROR - Emergency kill switch test failed: No module named 'email.message'
+2026-03-01 01:24:38,976 - __main__ - INFO - === PHASE 2: BROKER CONNECTIVITY MONITOR TEST ===
+2026-03-01 01:24:38,990 - __main__ - ERROR - Failed to get trading state: No module named 'email.message'
+2026-03-01 01:24:38,992 - __main__ - INFO - Initial trading state: False
+2026-03-01 01:24:39,001 - __main__ - ERROR - Broker connectivity test failed: No module named 'email.message'
+2026-03-01 01:24:39,001 - __main__ - INFO - === PHASE 3: DATABASE HEALTH GUARD TEST ===
+2026-03-01 01:24:39,010 - __main__ - ERROR - Failed to get trading state: No module named 'email.message'
+2026-03-01 01:24:39,012 - __main__ - INFO - Initial trading state: False
+2026-03-01 01:24:39,022 - __main__ - ERROR - Database health test failed: No module named 'email.message'
+2026-03-01 01:24:39,023 - __main__ - INFO - === PHASE 4: MONITORING & METRICS TEST ===
+2026-03-01 01:24:39,039 - __main__ - ERROR - Failed to get trading state: No module named 'email.message'
+2026-03-01 01:24:39,039 - __main__ - INFO - Initial trading state: False
+2026-03-01 01:24:39,097 - __main__ - ERROR - Monitoring metrics test failed: name 'asyncio' is not defined
+2026-03-01 01:24:39,098 - __main__ - INFO - === PHASE 5: ALERT ESCALATION LOGIC TEST ===
+2026-03-01 01:24:39,107 - __main__ - ERROR - Failed to get trading state: No module named 'email.message'
+2026-03-01 01:24:39,108 - __main__ - INFO - Initial trading state: False
+2026-03-01 01:24:39,120 - __main__ - ERROR - Alert escalation test failed: No module named 'email.message'
