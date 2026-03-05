@@ -1,0 +1,10 @@
+2026-03-05 07:18:30,777 - INFO - 🎯 NEXUS 500-TRADE FULL BACKTEST
+2026-03-05 07:18:30,778 - INFO - 🔍 Testing complete system functionality...
+2026-03-05 07:18:30,779 - INFO - 🚀 STARTING NEXUS 500-TRADE BACKTEST
+2026-03-05 07:18:30,779 - INFO - ============================================================
+2026-03-05 07:18:30,779 - INFO - 🔍 Connecting to MT5...
+2026-03-05 07:19:36,308 - ERROR - MT5 initialize failed: (-10005, 'IPC timeout')
+2026-03-05 07:19:36,308 - ERROR - ❌ MT5 initialization failed
+2026-03-05 07:19:36,308 - ERROR - ❌ Cannot connect to MT5. Backtest aborted.
+2026-03-05 07:19:36,310 - ERROR - ❌ BACKTEST FAILED!
+2026-03-05 07:19:36,310 - INFO - 🔌 MT5 shutdown complete

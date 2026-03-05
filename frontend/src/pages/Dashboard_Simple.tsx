@@ -1,10 +1,10 @@
 import React from 'react';
-import { SimpleSystemStatus } from '@/components/SimpleSystemStatus';
-import { CandleChart } from '@/components/CandleChart';
-import { MT5Connection } from '@/components/MT5Connection';
-import { ProfessionalTradingPanel } from '@/components/ProfessionalTradingPanel';
-import { DemoTradingPanel } from '@/components/DemoTradingPanel';
-import { UniversalMT5Connection } from '@/components/UniversalMT5Connection';
+import { SimpleSystemStatus } from '../components/SimpleSystemStatus';
+import { CandleChart } from '../components/CandleChart';
+import { MT5Connection } from '../components/MT5Connection';
+import { ProfessionalTradingPanel } from '../components/ProfessionalTradingPanel';
+import { DemoTradingPanel } from '../components/DemoTradingPanel';
+import { UniversalMT5Connection } from '../components/UniversalMT5Connection';
 
 const Dashboard: React.FC = () => {
   return (

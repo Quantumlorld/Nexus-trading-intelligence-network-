@@ -1,0 +1,52 @@
+{
+  "backend_status": true,
+  "mt5_connection": false,
+  "demo_trading": true,
+  "api_endpoints": [
+    {
+      "endpoint": "/admin/system-status",
+      "status_code": 200,
+      "success": true,
+      "response_time": 2.071207
+    },
+    {
+      "endpoint": "/admin/mt5-status",
+      "status_code": 200,
+      "success": true,
+      "response_time": 2.056104
+    },
+    {
+      "endpoint": "/admin/demo/progress",
+      "status_code": 200,
+      "success": true,
+      "response_time": 2.04664
+    },
+    {
+      "endpoint": "/admin/demo/start",
+      "status_code": 405,
+      "success": false,
+      "response_time": 2.050528
+    },
+    {
+      "endpoint": "/admin/mt5-universal-status",
+      "status_code": 200,
+      "success": true,
+      "response_time": 2.051668
+    },
+    {
+      "endpoint": "/admin/mt5-universal-connect",
+      "status_code": 405,
+      "success": false,
+      "response_time": 2.071804
+    }
+  ],
+  "system_health": {
+    "status": "degraded",
+    "db_status": "healthy",
+    "broker_status": "unhealthy",
+    "trading_enabled": false,
+    "uptime": "0:00:56"
+  },
+  "start_time": "2026-03-05 07:29:35.822112",
+  "end_time": "2026-03-05 07:30:46.646254"
+}
