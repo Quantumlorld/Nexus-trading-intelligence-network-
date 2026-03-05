@@ -416,7 +416,7 @@ class SystemLog(Base):
     request_id = Column(String(255), nullable=True, index=True)
     
     # Metadata
-    metadata = Column(JSON, nullable=True)
+    log_metadata = Column(JSON, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     
     # Relationships

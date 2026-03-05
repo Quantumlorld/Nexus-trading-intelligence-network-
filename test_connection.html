@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nexus MT5 Connection Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border-radius: 15px; padding: 20px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.2); }
+        .btn { background: linear-gradient(45deg, #00d2ff, #3a7bd5); color: white; border: none; padding: 15px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; margin: 10px; }
+        .btn:hover { transform: scale(1.05); }
+        .status { padding: 10px; border-radius: 10px; margin: 10px 0; }
+        .success { background: rgba(76, 175, 80, 0.3); border: 1px solid #4CAF50; }
+        .error { background: rgba(244, 67, 54, 0.3); border: 1px solid #f44336; }
+        .info { background: rgba(33, 150, 243, 0.3); border: 1px solid #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Nexus MT5 Connection Test</h1>
+        
+        <div class="card">
+            <h2>🌐 Universal MT5 Test</h2>
+            <button class="btn" onclick="testConnection()">Test Connection</button>
+            <button class="btn" onclick="connectMT5()">Connect MT5</button>
+            <button class="btn" onclick="getStatus()">Get Status</button>
+            <div id="result"></div>
+        </div>
+        
+        <div class="card">
+            <h2>📊 Connection Status</h2>
+            <div id="status">Click "Test Connection" to check status</div>
+        </div>
+        
+        <div class="card">
+            <h2>🚀 Demo Trading</h2>
+            <button class="btn" onclick="startDemo()">Start Demo Trading</button>
+            <button class="btn" onclick="getDemoProgress()">Get Demo Progress</button>
+            <div id="demo"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        async function testConnection() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                const data = await response.json();
+                showResult('✅ Backend Connected!', 'success');
+                showStatus('Backend Status', data);
+            } catch (error) {
+                showResult('❌ Backend Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function connectMT5() {
+            try {
+                showResult('🔄 Connecting to MT5...', 'info');
+                const response = await fetch(`${API_BASE}/admin/mt5-universal-connect`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showResult('✅ MT5 Connected Successfully!', 'success');
+                    showStatus('MT5 Account', data.account_summary);
+                } else {
+                    showResult('❌ MT5 Connection Failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResult('❌ MT5 Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function getStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/mt5-universal-status`);
+                const data = await response.json();
+                showStatus('MT5 Status', data);
+            } catch (error) {
+                showResult('❌ Status Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function startDemo() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/demo/start`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showResult('🚀 Demo Trading Started!', 'success');
+                    showDemoStatus('Demo Status', data);
+                } else {
+                    showResult('❌ Demo Start Failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showResult('❌ Demo Error: ' + error.message, 'error');
+            }
+        }
+        
+        async function getDemoProgress() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/demo/progress`);
+                const data = await response.json();
+                showDemoStatus('Demo Progress', data);
+            } catch (error) {
+                showResult('❌ Demo Progress Error: ' + error.message, 'error');
+            }
+        }
+        
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function showStatus(title, data) {
+            const status = document.getElementById('status');
+            status.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+        
+        function showDemoStatus(title, data) {
+            const demo = document.getElementById('demo');
+            demo.innerHTML = `
+                <h3>${title}</h3>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+        
+        // Auto-test on load
+        window.onload = () => {
+            testConnection();
+        };
+    </script>
+</body>
+</html>
