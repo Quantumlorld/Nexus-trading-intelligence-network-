@@ -1,0 +1,8 @@
+2026-03-07 07:36:55,214 - INFO - 🎯 NEXUS MT5 BROKER ADAPTER TEST
+2026-03-07 07:36:55,231 - INFO - 🔧 Senior Quantitative Trading Systems Engineer
+2026-03-07 07:36:55,238 - INFO - 🎯 MT5 Broker Adapter Initialized
+2026-03-07 07:36:55,254 - INFO - 📦 MT5 Version: 5.0.5640
+2026-03-07 07:36:55,268 - INFO - 🔍 Initializing MT5 terminal...
+2026-03-07 07:38:00,789 - ERROR - ❌ MT5 initialization failed: (-10005, 'IPC timeout')
+2026-03-07 07:38:00,790 - ERROR - ❌ MT5 initialization failed
+2026-03-07 07:38:00,790 - INFO - 🔌 Disconnected from MT5

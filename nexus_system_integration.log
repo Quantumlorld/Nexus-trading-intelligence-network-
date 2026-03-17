@@ -1,0 +1,178 @@
+2026-03-07 07:42:20,671 - INFO - 🎯 NEXUS SYSTEM INTEGRATION TEST
+2026-03-07 07:42:20,672 - INFO - 🔧 Senior Quantitative Trading Systems Engineer
+2026-03-07 07:42:20,672 - INFO - 🎯 Nexus System Integration Initialized
+2026-03-07 07:42:20,672 - INFO - 🔧 Backend URL: http://localhost:8000
+2026-03-07 07:42:20,682 - INFO - 🌐 Frontend URL: http://localhost:5174
+2026-03-07 07:42:20,683 - INFO - 🚀 STARTING COMPREHENSIVE SYSTEM INTEGRATION TEST
+2026-03-07 07:42:20,683 - INFO - ============================================================
+2026-03-07 07:42:20,684 - INFO - 🔍 PHASE 1: BACKEND HEALTH TEST
+2026-03-07 07:42:20,685 - INFO - 🔍 Testing backend health...
+2026-03-07 07:42:24,861 - ERROR - ❌ Backend health check exception: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:24,861 - INFO - 🔍 PHASE 2: FRONTEND ACCESSIBILITY TEST
+2026-03-07 07:42:24,861 - INFO - 🔍 Testing frontend accessibility...
+2026-03-07 07:42:28,948 - ERROR - ❌ Frontend accessibility exception: HTTPConnectionPool(host='localhost', port=5174): Max retries exceeded with url: / (Caused by NewConnectionError("HTTPConnection(host='localhost', port=5174): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:28,948 - INFO - 🔍 PHASE 3: API ENDPOINTS TEST
+2026-03-07 07:42:28,948 - INFO - 🔍 Testing API endpoints...
+2026-03-07 07:42:28,949 - INFO - 🔍 Testing Health Check...
+2026-03-07 07:42:33,042 - ERROR - ❌ Health Check: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:33,042 - INFO - 🔍 Testing System Status...
+2026-03-07 07:42:37,154 - ERROR - ❌ System Status: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/system-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:37,154 - INFO - 🔍 Testing MT5 Status...
+2026-03-07 07:42:41,264 - ERROR - ❌ MT5 Status: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:41,264 - INFO - 🔍 Testing Demo Progress...
+2026-03-07 07:42:45,374 - ERROR - ❌ Demo Progress: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/progress (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:45,376 - INFO - 🔍 Testing Demo Start...
+2026-03-07 07:42:49,464 - ERROR - ❌ Demo Start: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/start (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:49,465 - INFO - 🔍 Testing MT5 Connect...
+2026-03-07 07:42:53,559 - ERROR - ❌ MT5 Connect: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-connect (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:53,559 - INFO - 🔍 Testing Universal MT5 Status...
+2026-03-07 07:42:57,649 - ERROR - ❌ Universal MT5 Status: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-universal-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:42:57,649 - INFO - 🔍 Testing Universal MT5 Connect...
+2026-03-07 07:43:01,743 - ERROR - ❌ Universal MT5 Connect: Exception - HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-universal-connect (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:01,744 - INFO - 📊 API Endpoints: 0/8 working
+2026-03-07 07:43:01,745 - INFO -   ✅ Working: 0
+2026-03-07 07:43:01,746 - INFO -   ❌ Failed: 8
+2026-03-07 07:43:01,746 - INFO - 🔍 PHASE 4: MT5 INTEGRATION TEST
+2026-03-07 07:43:01,746 - INFO - 🔍 Testing MT5 integration...
+2026-03-07 07:43:05,838 - ERROR - ❌ MT5 integration test exception: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:05,839 - INFO - 🔍 PHASE 5: DEMO TRADING SYSTEM TEST
+2026-03-07 07:43:05,839 - INFO - 🔍 Testing demo trading system...
+2026-03-07 07:43:09,932 - ERROR - ❌ Demo trading test exception: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/start (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:09,933 - INFO - 🔍 PHASE 6: END-TO-END INTEGRATION TEST
+2026-03-07 07:43:09,936 - INFO - 🔍 Testing end-to-end integration...
+2026-03-07 07:43:09,936 - INFO - 🔍 Testing Backend → Frontend...
+2026-03-07 07:43:09,937 - INFO - 🔍 Testing backend health...
+2026-03-07 07:43:14,025 - ERROR - ❌ Backend health check exception: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:14,025 - INFO - 🔍 Testing frontend accessibility...
+2026-03-07 07:43:18,157 - ERROR - ❌ Frontend accessibility exception: HTTPConnectionPool(host='localhost', port=5174): Max retries exceeded with url: / (Caused by NewConnectionError("HTTPConnection(host='localhost', port=5174): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:18,158 - INFO - 🔍 Testing MT5 → Backend...
+2026-03-07 07:43:18,158 - INFO - 🔍 Testing MT5 integration...
+2026-03-07 07:43:22,232 - ERROR - ❌ MT5 integration test exception: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:22,234 - INFO - 🔍 Testing Demo → MT5...
+2026-03-07 07:43:22,234 - INFO - 🔍 Testing demo trading system...
+2026-03-07 07:43:26,329 - ERROR - ❌ Demo trading test exception: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/start (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,330 - INFO - 🔍 Testing Data Flow...
+2026-03-07 07:43:26,330 - INFO - ============================================================
+2026-03-07 07:43:26,330 - INFO - 📊 COMPREHENSIVE SYSTEM INTEGRATION RESULTS
+2026-03-07 07:43:26,332 - INFO - ============================================================
+2026-03-07 07:43:26,332 - INFO - 🎯 Test Duration: 0:01:05.657869
+2026-03-07 07:43:26,332 - INFO - 🔧 Backend Status: ❌ Unhealthy
+2026-03-07 07:43:26,333 - INFO - 🌐 Frontend Status: ❌ Inaccessible
+2026-03-07 07:43:26,333 - INFO - 🏦 MT5 Status: ❌ Disconnected
+2026-03-07 07:43:26,334 - INFO - 🔗 API Endpoints: 0/8 working
+2026-03-07 07:43:26,334 - INFO -   ✅ Working: 0
+2026-03-07 07:43:26,334 - INFO -   ❌ Failed: 8
+2026-03-07 07:43:26,334 - INFO - ❌ Failed Endpoints:
+2026-03-07 07:43:26,334 - INFO -   📝 Health Check: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,335 - INFO -   📝 System Status: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/system-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,335 - INFO -   📝 MT5 Status: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,336 - INFO -   📝 Demo Progress: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/progress (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,336 - INFO -   📝 Demo Start: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/start (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,336 - INFO -   📝 MT5 Connect: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-connect (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,337 - INFO -   📝 Universal MT5 Status: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-universal-status (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,339 - INFO -   📝 Universal MT5 Connect: HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-universal-connect (Caused by NewConnectionError("HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:43:26,340 - INFO - 📊 Overall System Status:
+2026-03-07 07:43:26,341 - INFO -   🔧 Backend: ❌
+2026-03-07 07:43:26,341 - INFO -   🌐 Frontend: ❌
+2026-03-07 07:43:26,341 - INFO -   🔗 API Success Rate: 0.0%
+2026-03-07 07:43:26,342 - INFO -   🏦 MT5: ❌
+2026-03-07 07:43:26,343 - INFO -   🎯 Demo Trading: ❌
+2026-03-07 07:43:26,343 - INFO -   🔄 End-to-End: ❌
+2026-03-07 07:43:26,344 - INFO -   📊 Overall Score: 0.0%
+2026-03-07 07:43:26,344 - INFO - ============================================================
+2026-03-07 07:43:26,344 - ERROR - ❌ SYSTEM INTEGRATION: CRITICAL ISSUES!
+2026-03-07 07:43:26,345 - ERROR - 🔧 Major improvements required
+2026-03-07 07:43:26,345 - INFO - ============================================================
+2026-03-07 07:43:26,345 - INFO - 🎯 RECOMMENDATIONS:
+2026-03-07 07:43:26,345 - INFO -   🔧 Start backend server: python simple_app.py
+2026-03-07 07:43:26,345 - INFO -   🌐 Start frontend server: npm run dev
+2026-03-07 07:43:26,347 - INFO -   🏦 Start MT5 terminal and login to XM Global
+2026-03-07 07:43:26,347 - INFO -   🔧 Review failed components and fix issues
+2026-03-07 07:43:26,348 - INFO - ============================================================
+2026-03-07 07:43:26,350 - INFO - 💾 Results saved to: nexus_integration_results_20260307_074326.json
+2026-03-07 07:46:51,181 - INFO - 🎯 NEXUS SYSTEM INTEGRATION TEST
+2026-03-07 07:46:51,183 - INFO - 🔧 Senior Quantitative Trading Systems Engineer
+2026-03-07 07:46:51,183 - INFO - 🎯 Nexus System Integration Initialized
+2026-03-07 07:46:51,185 - INFO - 🔧 Backend URL: http://localhost:8000
+2026-03-07 07:46:51,191 - INFO - 🌐 Frontend URL: http://localhost:5174
+2026-03-07 07:46:51,191 - INFO - 🚀 STARTING COMPREHENSIVE SYSTEM INTEGRATION TEST
+2026-03-07 07:46:51,193 - INFO - ============================================================
+2026-03-07 07:46:51,193 - INFO - 🔍 PHASE 1: BACKEND HEALTH TEST
+2026-03-07 07:46:51,194 - INFO - 🔍 Testing backend health...
+2026-03-07 07:47:03,271 - ERROR - ❌ Backend health check exception: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:47:03,272 - INFO - 🔍 PHASE 2: FRONTEND ACCESSIBILITY TEST
+2026-03-07 07:47:03,272 - INFO - 🔍 Testing frontend accessibility...
+2026-03-07 07:47:07,367 - ERROR - ❌ Frontend accessibility exception: HTTPConnectionPool(host='localhost', port=5174): Max retries exceeded with url: / (Caused by NewConnectionError("HTTPConnection(host='localhost', port=5174): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:47:07,368 - INFO - 🔍 PHASE 3: API ENDPOINTS TEST
+2026-03-07 07:47:07,368 - INFO - 🔍 Testing API endpoints...
+2026-03-07 07:47:07,369 - INFO - 🔍 Testing Health Check...
+2026-03-07 07:47:18,780 - INFO - ✅ Health Check: 200 (11.411s)
+2026-03-07 07:47:18,782 - INFO - 🔍 Testing System Status...
+2026-03-07 07:47:20,854 - INFO - ✅ System Status: 200 (2.071s)
+2026-03-07 07:47:20,855 - INFO - 🔍 Testing MT5 Status...
+2026-03-07 07:47:22,917 - INFO - ✅ MT5 Status: 200 (2.061s)
+2026-03-07 07:47:22,917 - INFO - 🔍 Testing Demo Progress...
+2026-03-07 07:47:25,001 - INFO - ✅ Demo Progress: 200 (2.084s)
+2026-03-07 07:47:25,002 - INFO - 🔍 Testing Demo Start...
+2026-03-07 07:47:27,066 - INFO - ✅ Demo Start: 200 (2.064s)
+2026-03-07 07:47:27,066 - INFO - 🔍 Testing MT5 Connect...
+2026-03-07 07:47:29,120 - ERROR - ❌ MT5 Connect: 422
+2026-03-07 07:47:29,121 - INFO - 🔍 Testing Universal MT5 Status...
+2026-03-07 07:47:31,200 - INFO - ✅ Universal MT5 Status: 200 (2.078s)
+2026-03-07 07:47:31,200 - INFO - 🔍 Testing Universal MT5 Connect...
+2026-03-07 07:47:43,259 - ERROR - ❌ Universal MT5 Connect: Exception - HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:47:43,263 - INFO - 📊 API Endpoints: 6/8 working
+2026-03-07 07:47:43,264 - INFO -   ✅ Working: 6
+2026-03-07 07:47:43,267 - INFO -   ❌ Failed: 2
+2026-03-07 07:47:43,270 - INFO - 🔍 PHASE 4: MT5 INTEGRATION TEST
+2026-03-07 07:47:43,272 - INFO - 🔍 Testing MT5 integration...
+2026-03-07 07:47:55,330 - ERROR - ❌ MT5 integration test exception: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:47:55,330 - INFO - 🔍 PHASE 5: DEMO TRADING SYSTEM TEST
+2026-03-07 07:47:55,332 - INFO - 🔍 Testing demo trading system...
+2026-03-07 07:48:07,391 - ERROR - ❌ Demo trading test exception: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:48:07,393 - INFO - 🔍 PHASE 6: END-TO-END INTEGRATION TEST
+2026-03-07 07:48:07,393 - INFO - 🔍 Testing end-to-end integration...
+2026-03-07 07:48:07,396 - INFO - 🔍 Testing Backend → Frontend...
+2026-03-07 07:48:07,397 - INFO - 🔍 Testing backend health...
+2026-03-07 07:48:19,433 - ERROR - ❌ Backend health check exception: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:48:19,435 - INFO - 🔍 Testing frontend accessibility...
+2026-03-07 07:48:23,537 - ERROR - ❌ Frontend accessibility exception: HTTPConnectionPool(host='localhost', port=5174): Max retries exceeded with url: / (Caused by NewConnectionError("HTTPConnection(host='localhost', port=5174): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it"))
+2026-03-07 07:48:23,538 - INFO - 🔍 Testing MT5 → Backend...
+2026-03-07 07:48:23,538 - INFO - 🔍 Testing MT5 integration...
+2026-03-07 07:48:35,601 - ERROR - ❌ MT5 integration test exception: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:48:35,603 - INFO - 🔍 Testing Demo → MT5...
+2026-03-07 07:48:35,604 - INFO - 🔍 Testing demo trading system...
+2026-03-07 07:48:47,686 - ERROR - ❌ Demo trading test exception: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:48:47,687 - INFO - 🔍 Testing Data Flow...
+2026-03-07 07:48:47,687 - INFO - ============================================================
+2026-03-07 07:48:47,687 - INFO - 📊 COMPREHENSIVE SYSTEM INTEGRATION RESULTS
+2026-03-07 07:48:47,687 - INFO - ============================================================
+2026-03-07 07:48:47,689 - INFO - 🎯 Test Duration: 0:01:56.504172
+2026-03-07 07:48:47,689 - INFO - 🔧 Backend Status: ❌ Unhealthy
+2026-03-07 07:48:47,689 - INFO - 🌐 Frontend Status: ❌ Inaccessible
+2026-03-07 07:48:47,689 - INFO - 🏦 MT5 Status: ❌ Disconnected
+2026-03-07 07:48:47,690 - INFO - 🔗 API Endpoints: 6/8 working
+2026-03-07 07:48:47,691 - INFO -   ✅ Working: 6
+2026-03-07 07:48:47,691 - INFO -   ❌ Failed: 2
+2026-03-07 07:48:47,691 - INFO - ❌ Failed Endpoints:
+2026-03-07 07:48:47,694 - INFO -   📝 MT5 Connect: Unknown error
+2026-03-07 07:48:47,695 - INFO -   📝 Universal MT5 Connect: HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)
+2026-03-07 07:48:47,697 - INFO - 📊 Overall System Status:
+2026-03-07 07:48:47,698 - INFO -   🔧 Backend: ❌
+2026-03-07 07:48:47,698 - INFO -   🌐 Frontend: ❌
+2026-03-07 07:48:47,699 - INFO -   🔗 API Success Rate: 75.0%
+2026-03-07 07:48:47,700 - INFO -   🏦 MT5: ❌
+2026-03-07 07:48:47,700 - INFO -   🎯 Demo Trading: ❌
+2026-03-07 07:48:47,701 - INFO -   🔄 End-to-End: ❌
+2026-03-07 07:48:47,702 - INFO -   📊 Overall Score: 0.0%
+2026-03-07 07:48:47,702 - INFO - ============================================================
+2026-03-07 07:48:47,702 - ERROR - ❌ SYSTEM INTEGRATION: CRITICAL ISSUES!
+2026-03-07 07:48:47,702 - ERROR - 🔧 Major improvements required
+2026-03-07 07:48:47,702 - INFO - ============================================================
+2026-03-07 07:48:47,704 - INFO - 🎯 RECOMMENDATIONS:
+2026-03-07 07:48:47,704 - INFO -   🔧 Start backend server: python simple_app.py
+2026-03-07 07:48:47,704 - INFO -   🌐 Start frontend server: npm run dev
+2026-03-07 07:48:47,705 - INFO -   🏦 Start MT5 terminal and login to XM Global
+2026-03-07 07:48:47,706 - INFO -   🔧 Review failed components and fix issues
+2026-03-07 07:48:47,715 - INFO - ============================================================
+2026-03-07 07:48:47,718 - INFO - 💾 Results saved to: nexus_integration_results_20260307_074847.json

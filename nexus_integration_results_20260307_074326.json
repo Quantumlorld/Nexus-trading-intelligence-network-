@@ -1,0 +1,92 @@
+{
+  "backend_status": false,
+  "frontend_status": false,
+  "mt5_status": false,
+  "api_endpoints": [
+    {
+      "name": "Health Check",
+      "path": "/health",
+      "method": "GET",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /health (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "System Status",
+      "path": "/admin/system-status",
+      "method": "GET",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/system-status (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "MT5 Status",
+      "path": "/admin/mt5-status",
+      "method": "GET",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-status (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "Demo Progress",
+      "path": "/admin/demo/progress",
+      "method": "GET",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/progress (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "Demo Start",
+      "path": "/admin/demo/start",
+      "method": "POST",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/demo/start (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "MT5 Connect",
+      "path": "/admin/mt5-connect",
+      "method": "POST",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-connect (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "Universal MT5 Status",
+      "path": "/admin/mt5-universal-status",
+      "method": "GET",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-universal-status (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    },
+    {
+      "name": "Universal MT5 Connect",
+      "path": "/admin/mt5-universal-connect",
+      "method": "POST",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Max retries exceeded with url: /admin/mt5-universal-connect (Caused by NewConnectionError(\"HTTPConnection(host='localhost', port=8000): Failed to establish a new connection: [WinError 10061] No connection could be made because the target machine actively refused it\"))"
+    }
+  ],
+  "integration_tests": [],
+  "start_time": "2026-03-07 07:42:20.672635",
+  "end_time": "2026-03-07 07:43:26.330504",
+  "duration": "0:01:05.657869",
+  "overall_status": {
+    "backend_healthy": false,
+    "frontend_accessible": false,
+    "api_success_rate": 0.0,
+    "mt5_connected": false,
+    "demo_trading_active": false,
+    "end_to_end_working": false,
+    "overall_score": 0.0
+  }
+}

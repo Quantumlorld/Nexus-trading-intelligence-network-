@@ -3,55 +3,168 @@ MetaTrader 5 Integration for Nexus Trading System
 Real broker connection and trading functionality
 """
 
-import MetaTrader5 as mt5
 import logging
+import os
+import subprocess
+import time
 from datetime import datetime
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional, Tuple
+
+import MetaTrader5 as mt5
 
 logger = logging.getLogger(__name__)
 
 class MT5Connector:
     """Real MetaTrader 5 broker connector"""
     
-    def __init__(self):
+    def __init__(self, terminal_path: str = None):
+        self.terminal_path = terminal_path or r"C:\Program Files\MetaTrader 5\terminal64.exe"  # Working path
         self.connected = False
         self.account_info = None
         self.symbols = []
+        self.connection_status: str = "DISCONNECTED"
+        self.last_error: Optional[Tuple[int, str]] = None
+
+        self.max_attempts = int(os.environ.get("MT5_MAX_ATTEMPTS", "5"))
+        self.retry_delay_sec = float(os.environ.get("MT5_RETRY_DELAY_SEC", "2.0"))
         
-    def initialize(self) -> bool:
-        """Initialize MT5 terminal"""
+    def _terminal_exists(self) -> bool:
+        return bool(self.terminal_path) and os.path.exists(self.terminal_path)
+
+    def _ensure_terminal_running(self) -> bool:
+        """Best-effort: launch terminal if it's not running. Always safe to call."""
         try:
-            if not mt5.initialize():
-                logger.error(f"MT5 initialize failed: {mt5.last_error()}")
+            if not self._terminal_exists():
                 return False
-            
-            self.connected = True
-            logger.info("MT5 terminal initialized successfully")
+
+            # We don't strictly check process list here (permissions vary). We just attempt a launch.
+            subprocess.Popen([self.terminal_path], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             return True
-            
         except Exception as e:
-            logger.error(f"MT5 initialization error: {e}")
+            logger.error(f"MT5 terminal launch error: {e}")
             return False
+
+    def initialize(self) -> bool:
+        """Initialize MT5 connection with explicit path"""
+        for attempt in range(self.max_attempts):
+            try:
+                logger.info(f"MT5 initialize attempt {attempt + 1}/{self.max_attempts}")
+                
+                # Use explicit path parameter
+                result = mt5.initialize(path=self.terminal_path)
+                
+                if result:
+                    self.connected = True
+                    self.connection_status = "CONNECTED"
+                    logger.info("✅ MT5 initialized successfully with explicit path")
+                    return True
+                else:
+                    error = mt5.last_error()
+                    self.last_error = error
+                    logger.warning(f"MT5 initialize failed (attempt {attempt + 1}/{self.max_attempts}): {error}")
+                    
+                    if error[0] == -10005:  # IPC timeout
+                        self.connection_status = "IPC_TIMEOUT"
+                    elif error[0] == -10003:  # IPC initialize failed  
+                        self.connection_status = "IPC_ERROR"
+                    else:
+                        self.connection_status = "INITIALIZE_FAILED"
+                    
+                    if attempt < self.max_attempts - 1:
+                        time.sleep(self.retry_delay_sec)
+                        
+            except Exception as e:
+                logger.error(f"MT5 initialize exception (attempt {attempt + 1}): {e}")
+                self.connection_status = "EXCEPTION"
+                self.last_error = (0, str(e))
+                
+                if attempt < self.max_attempts - 1:
+                    time.sleep(self.retry_delay_sec)
+        
+        logger.error("❌ All MT5 initialize attempts failed")
+        return False
     
     def login(self, account: int, password: str, server: str) -> bool:
-        """Login to MT5 account"""
+        """Login to MT5 account with retry + status codes."""
+        if not self.connected:
+            if not self.initialize():
+                return False
+
+        for attempt in range(1, self.max_attempts + 1):
+            try:
+                authorized = mt5.login(account, password=password, server=server)
+                self.last_error = mt5.last_error()
+
+                if authorized:
+                    self.account_info = mt5.account_info()
+                    self.connected = True
+                    self.connection_status = "CONNECTED"
+                    logger.info(f"Successfully logged into MT5 account {account}")
+                    return True
+
+                code = (self.last_error or (None, ""))[0]
+                if code in (-10001, -10004, -10005):
+                    self.connection_status = "IPC_ERROR"
+                else:
+                    self.connection_status = "LOGIN_FAILED"
+
+                logger.error(
+                    f"MT5 login failed (attempt {attempt}/{self.max_attempts}): {self.last_error}"
+                )
+
+                if attempt < self.max_attempts:
+                    time.sleep(self.retry_delay_sec)
+            except Exception as e:
+                self.connection_status = "LOGIN_FAILED"
+                logger.error(f"MT5 login error (attempt {attempt}/{self.max_attempts}): {e}")
+                if attempt < self.max_attempts:
+                    time.sleep(self.retry_delay_sec)
+
+        self.connected = False
+        return False
+
+    def status(self) -> Dict[str, Any]:
+        return {
+            "connection_status": self.connection_status,
+            "connected": bool(self.connected and self.connection_status == "CONNECTED"),
+            "terminal_path": self.terminal_path,
+            "last_error": self.last_error,
+        }
+
+    def mt5_health(self) -> Dict[str, Any]:
+        """Health snapshot for API/status screens."""
         try:
             if not self.connected:
-                if not self.initialize():
-                    return False
-            
-            authorized = mt5.login(account, password=password, server=server)
-            if authorized:
-                self.account_info = mt5.account_info()
-                logger.info(f"Successfully logged into MT5 account {account}")
-                return True
-            else:
-                logger.error(f"MT5 login failed: {mt5.last_error()}")
-                return False
-                
+                return {
+                    "connected": False,
+                    "connection_status": self.connection_status,
+                    "account": None,
+                    "balance": None,
+                }
+
+            ai = mt5.account_info()
+            if not ai:
+                return {
+                    "connected": False,
+                    "connection_status": "LOGIN_FAILED",
+                    "account": None,
+                    "balance": None,
+                }
+
+            return {
+                "connected": True,
+                "connection_status": self.connection_status,
+                "account": ai.login,
+                "balance": ai.balance,
+            }
         except Exception as e:
-            logger.error(f"MT5 login error: {e}")
-            return False
+            logger.error(f"mt5_health error: {e}")
+            return {
+                "connected": False,
+                "connection_status": "IPC_ERROR",
+                "account": None,
+                "balance": None,
+            }
     
     def get_account_info(self) -> Optional[Dict[str, Any]]:
         """Get account information"""

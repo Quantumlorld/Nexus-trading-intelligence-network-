@@ -1,0 +1,45 @@
+2026-03-07 07:39:30,778 - INFO - 🎯 NEXUS MARKET DATA ENGINE TEST
+2026-03-07 07:39:30,779 - INFO - 🔧 Senior Quantitative Trading Systems Engineer
+2026-03-07 07:39:30,790 - INFO - ✅ MetaTrader5 module available
+2026-03-07 07:39:30,791 - INFO - 🎯 Market Data Engine Initialized
+2026-03-07 07:39:30,791 - INFO - 📊 MT5 Available: True
+2026-03-07 07:39:30,826 - ERROR - ❌ MT5 initialization failed: (-6, 'Terminal: Authorization failed')
+2026-03-07 07:39:30,827 - INFO - 🔍 Testing symbol information...
+2026-03-07 07:39:30,827 - WARNING - ⚠️ Symbol EURUSD not found
+2026-03-07 07:39:30,829 - WARNING - ⚠️ Symbol GBPUSD not found
+2026-03-07 07:39:30,829 - WARNING - ⚠️ Symbol USDJPY not found
+2026-03-07 07:39:30,830 - WARNING - ⚠️ Symbol XAUUSD not found
+2026-03-07 07:39:30,832 - WARNING - ⚠️ Symbol BTCUSD not found
+2026-03-07 07:39:30,835 - INFO - 🔍 Testing tick data...
+2026-03-07 07:39:30,837 - WARNING - ⚠️ No tick data for EURUSD
+2026-03-07 07:39:30,837 - INFO - 🔍 Testing candle data...
+2026-03-07 07:39:30,838 - WARNING - ⚠️ No candle data for EURUSD M1
+2026-03-07 07:39:30,838 - WARNING - ⚠️ No candle data for EURUSD M5
+2026-03-07 07:39:30,839 - WARNING - ⚠️ No candle data for EURUSD M15
+2026-03-07 07:39:30,840 - WARNING - ⚠️ No candle data for EURUSD H1
+2026-03-07 07:39:30,841 - WARNING - ⚠️ No candle data for EURUSD H4
+2026-03-07 07:39:30,841 - INFO - 🔨 Creating 9H candles for EURUSD...
+2026-03-07 07:39:30,841 - WARNING - ⚠️ No candle data for EURUSD H1
+2026-03-07 07:39:30,841 - INFO - 🔍 Testing technical indicators...
+2026-03-07 07:39:30,843 - WARNING - ⚠️ No candle data for EURUSD H1
+2026-03-07 07:39:30,843 - INFO - 🔍 Testing market snapshot...
+2026-03-07 07:39:30,844 - WARNING - ⚠️ No tick data for EURUSD
+2026-03-07 07:39:30,844 - WARNING - ⚠️ Symbol EURUSD not found
+2026-03-07 07:39:30,845 - WARNING - ⚠️ No candle data for EURUSD M1
+2026-03-07 07:39:30,845 - WARNING - ⚠️ No candle data for EURUSD M5
+2026-03-07 07:39:30,845 - WARNING - ⚠️ No candle data for EURUSD M15
+2026-03-07 07:39:30,846 - WARNING - ⚠️ No candle data for EURUSD H1
+2026-03-07 07:39:30,846 - WARNING - ⚠️ No candle data for EURUSD H4
+2026-03-07 07:39:30,846 - INFO - 🔨 Creating 9H candles for EURUSD...
+2026-03-07 07:39:30,852 - WARNING - ⚠️ No candle data for EURUSD H1
+2026-03-07 07:39:30,853 - WARNING - ⚠️ No tick data for GBPUSD
+2026-03-07 07:39:30,854 - WARNING - ⚠️ Symbol GBPUSD not found
+2026-03-07 07:39:30,855 - WARNING - ⚠️ No candle data for GBPUSD M1
+2026-03-07 07:39:30,856 - WARNING - ⚠️ No candle data for GBPUSD M5
+2026-03-07 07:39:30,856 - WARNING - ⚠️ No candle data for GBPUSD M15
+2026-03-07 07:39:30,856 - WARNING - ⚠️ No candle data for GBPUSD H1
+2026-03-07 07:39:30,857 - WARNING - ⚠️ No candle data for GBPUSD H4
+2026-03-07 07:39:30,857 - INFO - 🔨 Creating 9H candles for GBPUSD...
+2026-03-07 07:39:30,857 - WARNING - ⚠️ No candle data for GBPUSD H1
+2026-03-07 07:39:30,858 - INFO - ✅ Market snapshot: 2 symbols
+2026-03-07 07:39:30,858 - INFO - 📊 Cache stats: 0 items

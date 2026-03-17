@@ -1,21 +1,27 @@
 """
 Nexus Trading System - Simple FastAPI Application
-Minimal working version for system integration testing
+Minimal working version for system integration
 """
 
+# Core imports
 import asyncio
+import json
 import logging
+import os
+import random
+import time
 from datetime import datetime, timedelta
-from typing import Dict, Any, List, Optional
-
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware
+from typing import Dict, List, Optional, Any
 from pydantic import BaseModel, Field
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 import uvicorn
 
 # Import MT5 integration
 from mt5_integration import get_mt5_connector
 from universal_mt5_connector import get_universal_connector
+from mt5_bridge_client import BridgeMT5Connector
 
 # Configure logging
 logging.basicConfig(
@@ -23,6 +29,16 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+# MT5 import
+try:
+    import MetaTrader5 as mt5
+    MT5_AVAILABLE = True
+    logger.info("✅ MetaTrader5 module available")
+except ImportError:
+    MT5_AVAILABLE = False
+    mt5 = None
+    logger.warning("⚠️ MetaTrader5 module not available")
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -77,6 +93,33 @@ app_state = {
     "current_phase": "baseline"
 }
 
+# Initialize connectors
+mt5_connector = get_mt5_connector()
+universal_connector = get_universal_connector()
+bridge_connector = BridgeMT5Connector()
+
+# XM Broker Credentials (User's actual accounts)
+XM_BROKER_ACCOUNT = "primeworld069"
+XM_BROKER_PASSWORD = "REPLACE_WITH_ACTUAL_PASSWORD"
+XM_MQL5_ACCOUNT = "Quantumlorld"
+XM_MQL5_PASSWORD = "REPLACE_WITH_ACTUAL_PASSWORD"
+
+# XM Global servers to try
+XM_SERVERS = [
+    "XMGlobal-MT5 10",
+    "XMGlobal-MT5 5",
+    "XMGlobal-MT5",
+    "XMGlobal-MT5 2",
+    "XMGlobal-MT5 9",
+    "XMGlobal-MT5 7",
+    "XMGlobal-MT5 8"
+]
+
+# Demo account (fallback)
+MT5_DEMO_ACCOUNT = 103969793
+MT5_DEMO_PASSWORD = "*d8qNgQq"
+MT5_DEMO_SERVER = "MetaQuotes-Demo"
+
 # Demo trading configuration
 DEMO_PHASES = {
     "baseline": {"max_trades": 100, "risk_per_trade": 1.0},
@@ -84,8 +127,10 @@ DEMO_PHASES = {
     "optimization": {"max_trades": 200, "full_optimization": True}
 }
 
-# Get MT5 connectors
+# Get MT5 connectors with working configuration
 mt5_connector = get_mt5_connector()
+# Override with working path and method
+mt5_connector.terminal_path = r"C:\Program Files\MetaTrader 5\terminal64.exe"
 universal_connector = get_universal_connector()
 
 # Mock data
@@ -271,6 +316,176 @@ async def execute_trade(trade_request: TradeRequest):
         logger.error(f"Trade execution failed: {e}")
         raise HTTPException(status_code=500, detail=f"Trade execution failed: {str(e)}")
 
+@app.post("/admin/mt5-connect-xm")
+async def connect_mt5_xm():
+    """Connect to XM Global MT5 with user credentials"""
+    try:
+        logger.info("🔑 Attempting to connect to XM Global MT5...")
+        
+        # Try XM broker account first
+        for server in XM_SERVERS:
+            logger.info(f"🔍 Trying XM broker account on {server}")
+            
+            try:
+                # Initialize MT5
+                if not mt5.initialize():
+                    error_code = mt5.last_error()
+                    logger.error(f"❌ MT5 initialization failed: {error_code}")
+                    continue
+                
+                # Try XM broker login
+                login_result = mt5.login(
+                    login=XM_BROKER_ACCOUNT,
+                    password=XM_BROKER_PASSWORD,
+                    server=server
+                )
+                
+                if login_result:
+                    logger.info(f"✅ XM broker login successful on {server}")
+                    
+                    # Get account info
+                    account_info = mt5.account_info()
+                    
+                    # Update app state
+                    app_state["mt5_connected"] = True
+                    app_state["mt5_account"] = account_info.login
+                    app_state["mt5_server"] = account_info.server
+                    
+                    # Start demo trading
+                    app_state["demo_mode"] = True
+                    app_state["trade_count"] = 0
+                    app_state["adaptive_learning"] = False
+                    app_state["current_phase"] = "baseline"
+                    
+                    return {
+                        "success": True,
+                        "message": f"Connected to XM Global MT5 on {server}",
+                        "account": account_info.login,
+                        "server": account_info.server,
+                        "balance": account_info.balance,
+                        "equity": account_info.equity,
+                        "broker": account_info.company
+                    }
+                else:
+                    error_code = mt5.last_error()
+                    logger.warning(f"⚠️ XM broker login failed for {server}: {error_code}")
+                    mt5.shutdown()
+                    
+            except Exception as e:
+                logger.error(f"❌ XM broker login exception for {server}: {e}")
+                try:
+                    mt5.shutdown()
+                except:
+                    pass
+        
+        # Try MQL5 account
+        for server in XM_SERVERS:
+            logger.info(f"🔍 Trying MQL5 account on {server}")
+            
+            try:
+                # Initialize MT5
+                if not mt5.initialize():
+                    error_code = mt5.last_error()
+                    logger.error(f"❌ MT5 initialization failed: {error_code}")
+                    continue
+                
+                # Try MQL5 login
+                login_result = mt5.login(
+                    login=XM_MQL5_ACCOUNT,
+                    password=XM_MQL5_PASSWORD,
+                    server=server
+                )
+                
+                if login_result:
+                    logger.info(f"✅ MQL5 login successful on {server}")
+                    
+                    # Get account info
+                    account_info = mt5.account_info()
+                    
+                    # Update app state
+                    app_state["mt5_connected"] = True
+                    app_state["mt5_account"] = account_info.login
+                    app_state["mt5_server"] = account_info.server
+                    
+                    # Start demo trading
+                    app_state["demo_mode"] = True
+                    app_state["trade_count"] = 0
+                    app_state["adaptive_learning"] = False
+                    app_state["current_phase"] = "baseline"
+                    
+                    return {
+                        "success": True,
+                        "message": f"Connected to MQL5 account on {server}",
+                        "account": account_info.login,
+                        "server": account_info.server,
+                        "balance": account_info.balance,
+                        "equity": account_info.equity,
+                        "broker": account_info.company
+                    }
+                else:
+                    error_code = mt5.last_error()
+                    logger.warning(f"⚠️ MQL5 login failed for {server}: {error_code}")
+                    mt5.shutdown()
+                    
+            except Exception as e:
+                logger.error(f"❌ MQL5 login exception for {server}: {e}")
+                try:
+                    mt5.shutdown()
+                except:
+                    pass
+        
+        # Fallback to demo account
+        logger.info("🔄 Falling back to demo account...")
+        
+        if not mt5.initialize():
+            error_code = mt5.last_error()
+            return {"success": False, "message": f"MT5 initialization failed: {error_code}"}
+        
+        login_result = mt5.login(
+            login=MT5_DEMO_ACCOUNT,
+            password=MT5_DEMO_PASSWORD,
+            server=MT5_DEMO_SERVER
+        )
+        
+        if login_result:
+            logger.info("✅ Demo account login successful")
+            
+            # Get account info
+            account_info = mt5.account_info()
+            
+            # Update app state
+            app_state["mt5_connected"] = True
+            app_state["mt5_account"] = account_info.login
+            app_state["mt5_server"] = account_info.server
+            
+            # Start demo trading
+            app_state["demo_mode"] = True
+            app_state["trade_count"] = 0
+            app_state["adaptive_learning"] = False
+            app_state["current_phase"] = "baseline"
+            
+            return {
+                "success": True,
+                "message": f"Connected to demo account on {account_info.server}",
+                "account": account_info.login,
+                "server": account_info.server,
+                "balance": account_info.balance,
+                "equity": account_info.equity,
+                "broker": account_info.company
+            }
+        else:
+            error_code = mt5.last_error()
+            return {"success": False, "message": f"All login attempts failed: {error_code}"}
+        
+    except Exception as e:
+        logger.error(f"❌ MT5 connect exception: {e}")
+        return {"success": False, "message": f"Connection failed: {str(e)}"}
+    finally:
+        try:
+            mt5.shutdown()
+        except:
+            pass
+
 @app.post("/admin/mt5-connect")
 async def connect_mt5(account: int, password: str, server: str):
     """Connect to MT5 account and auto-start demo trading"""
@@ -336,6 +551,31 @@ async def get_mt5_status():
     except Exception as e:
         logger.error(f"MT5 status error: {e}")
         return {"connected": False, "message": f"Error: {str(e)}"}
+
+
+@app.get("/mt5/status")
+async def mt5_status_public():
+    """Public MT5 status for dashboard compatibility."""
+    try:
+        health = mt5_connector.mt5_health() if hasattr(mt5_connector, "mt5_health") else {"connected": False}
+        status = mt5_connector.status() if hasattr(mt5_connector, "status") else {}
+
+        connection_status = status.get("connection_status") or health.get("connection_status") or ("CONNECTED" if health.get("connected") else "DISCONNECTED")
+
+        return {
+            "connection_status": connection_status,
+            "account_login": health.get("account"),
+            "account_balance": health.get("balance"),
+            "connected": bool(health.get("connected")),
+        }
+    except Exception as e:
+        logger.error(f"/mt5/status error: {e}")
+        return {
+            "connection_status": "IPC_ERROR",
+            "account_login": None,
+            "account_balance": None,
+            "connected": False,
+        }
 
 @app.post("/admin/demo/start")
 async def start_demo_trading():
@@ -537,6 +777,21 @@ async def simulate_broker_recovery():
     logger.info("Broker connection recovery simulated")
     return {"success": True, "message": "Broker recovery simulated", "timestamp": datetime.utcnow().isoformat()}
 
+@app.post("/admin/start-demo")
+async def start_immediate_demo():
+    """Start immediate demo trading"""
+    global app_state
+    try:
+        app_state["demo_trading"] = True
+        app_state["demo_trades_executed"] = 0
+        app_state["demo_start_time"] = datetime.now().isoformat()
+        
+        logger.info("🚀 Immediate demo trading STARTED")
+        return {"success": True, "message": "Demo trading started"}
+    except Exception as e:
+        logger.error(f"Demo trading start error: {e}")
+        return {"success": False, "error": str(e)}
+
 @app.get("/admin/system-status")
 async def get_system_status():
     """Get detailed system status"""
@@ -549,6 +804,89 @@ async def get_system_status():
         "supported_symbols": ["EUR/USD", "BTC/USD"],
         "supported_timeframes": ["1h", "5m", "9h"],
         "9h_candles_available": {symbol: len(candles) for symbol, candles in mock_9h_candles.items()}
+    }
+
+# Bridge endpoints
+class BridgeCommand(BaseModel):
+    command: str
+    params: Dict[str, Any] = {}
+    timestamp: Optional[float] = None
+
+# Configure Pydantic
+class Config:
+    json_encoders = {
+        'dict': lambda x: x
+    }
+
+# Store bridge commands and responses
+bridge_commands = []
+bridge_responses = []
+
+@app.get("/mt5/bridge/commands")
+async def get_bridge_commands():
+    """Get pending commands for MQL5 bridge"""
+    global bridge_commands
+    commands = bridge_commands.copy()
+    bridge_commands.clear()
+    return {"commands": commands}
+
+@app.post("/mt5/bridge/data")
+async def receive_bridge_data(data: Dict[str, Any]):
+    """Receive data from MQL5 bridge"""
+    global bridge_responses
+    try:
+        bridge_responses.append(data)
+        return {"success": True}
+    except Exception as e:
+        logger.error(f"Bridge data error: {e}")
+        return {"success": False, "error": str(e)}
+
+@app.get("/mt5/bridge/responses")
+async def get_bridge_responses():
+    """Get bridge responses"""
+    global bridge_responses
+    responses = bridge_responses.copy()
+    bridge_responses.clear()
+    return responses
+
+@app.post("/mt5/bridge/command")
+async def send_bridge_command(command: BridgeCommand):
+    """Send command to bridge"""
+    global bridge_commands
+    if command.timestamp is None:
+        command.timestamp = time.time()
+    bridge_commands.append(command.dict())
+    return {"success": True, "message": "Command queued"}
+
+@app.post("/mt5/bridge/connect")
+async def connect_bridge():
+    """Connect to MT5 via bridge"""
+    try:
+        success = bridge_connector.initialize()
+        if success:
+            app_state["broker_connected"] = True
+            account_info = bridge_connector.get_account_info()
+            if account_info:
+                app_state["mt5_account"] = account_info.get("login")
+                app_state["mt5_server"] = account_info.get("server")
+            return {
+                "success": True,
+                "message": "Bridge connected successfully",
+                "account_info": account_info
+            }
+        else:
+            return {"success": False, "message": "Failed to connect via bridge"}
+    except Exception as e:
+        logger.error(f"Bridge connection error: {e}")
+        return {"success": False, "message": str(e)}
+
+@app.get("/mt5/bridge/status")
+async def get_bridge_status():
+    """Get bridge connection status"""
+    return {
+        "connected": bridge_connector.connected,
+        "account_info": bridge_connector.account_info,
+        "broker_connected": app_state["broker_connected"]
     }
 
 if __name__ == "__main__":

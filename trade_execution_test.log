@@ -1,0 +1,17 @@
+2026-03-07 07:40:19,184 - INFO - 🎯 NEXUS TRADE EXECUTION TEST
+2026-03-07 07:40:19,186 - INFO - 🔧 Senior Quantitative Trading Systems Engineer
+2026-03-07 07:40:20,029 - INFO - ✅ MetaTrader5 module available
+2026-03-07 07:40:20,032 - INFO - 🎯 Trade Execution Test Initialized
+2026-03-07 07:40:20,032 - INFO - 📊 MT5 Available: True
+2026-03-07 07:40:20,032 - INFO - 🚀 STARTING COMPREHENSIVE TRADE EXECUTION TEST
+2026-03-07 07:40:20,033 - INFO - ============================================================
+2026-03-07 07:41:25,541 - ERROR - ❌ MT5 initialization failed: (-10005, 'IPC timeout')
+2026-03-07 07:41:25,542 - ERROR - ❌ MT5 initialization test failed
+2026-03-07 07:41:25,542 - INFO - 🔌 MT5 connection closed
+2026-03-07 07:41:25,543 - INFO - ============================================================
+2026-03-07 07:41:25,544 - INFO - 📊 COMPREHENSIVE TEST RESULTS
+2026-03-07 07:41:25,544 - INFO - ============================================================
+2026-03-07 07:41:25,545 - INFO - 🎯 MT5 Available: ✅
+2026-03-07 07:41:25,546 - INFO - 🔌 MT5 Initialized: ❌
+2026-03-07 07:41:25,546 - INFO - 🔑 Login Successful: ❌
+2026-03-07 07:41:25,546 - ERROR - ❌ Test execution failed: 'duration'

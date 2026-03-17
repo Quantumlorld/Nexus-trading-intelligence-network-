@@ -1,0 +1,154 @@
+{
+  "backend_status": false,
+  "frontend_status": false,
+  "mt5_status": false,
+  "api_endpoints": [
+    {
+      "name": "Health Check",
+      "path": "/health",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 11.411068439483643,
+      "success": true,
+      "data": {
+        "status": "degraded",
+        "db_status": "healthy",
+        "broker_status": "unhealthy",
+        "trading_enabled": false,
+        "uptime": "0:03:26"
+      }
+    },
+    {
+      "name": "System Status",
+      "path": "/admin/system-status",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 2.070986747741699,
+      "success": true,
+      "data": {
+        "trading_enabled": false,
+        "broker_connected": false,
+        "db_connected": true,
+        "uptime": "0:03:28",
+        "start_time": "2026-03-07T06:43:52.673981",
+        "supported_symbols": [
+          "EUR/USD",
+          "BTC/USD"
+        ],
+        "supported_timeframes": [
+          "1h",
+          "5m",
+          "9h"
+        ],
+        "9h_candles_available": {
+          "EUR/USD": 3,
+          "XAU/USD": 3,
+          "USDX": 3,
+          "BTC/USD": 3
+        }
+      }
+    },
+    {
+      "name": "MT5 Status",
+      "path": "/admin/mt5-status",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 2.0607659816741943,
+      "success": true,
+      "data": {
+        "connected": false,
+        "message": "MT5 not connected",
+        "demo_mode": true,
+        "trade_count": 0,
+        "current_phase": "baseline"
+      }
+    },
+    {
+      "name": "Demo Progress",
+      "path": "/admin/demo/progress",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 2.084322214126587,
+      "success": true,
+      "data": {
+        "trade_count": 0,
+        "current_phase": "baseline",
+        "phase_name": "baseline",
+        "phase_progress": 0.0,
+        "adaptive_learning": false,
+        "demo_mode": true,
+        "next_phase_features": [
+          "Adaptive learning",
+          "Behavioral analysis",
+          "Strategy optimization"
+        ]
+      }
+    },
+    {
+      "name": "Demo Start",
+      "path": "/admin/demo/start",
+      "method": "POST",
+      "status_code": 200,
+      "response_time": 2.063534736633301,
+      "success": true,
+      "data": {
+        "success": true,
+        "message": "Demo trading started",
+        "plan": {
+          "phase_1": "100 trades - Baseline establishment",
+          "phase_2": "200 trades - Adaptive learning",
+          "phase_3": "200 trades - Full optimization",
+          "total": "500 trades"
+        },
+        "current_phase": "baseline",
+        "features": [
+          "Safe risk management",
+          "Performance tracking"
+        ]
+      }
+    },
+    {
+      "name": "MT5 Connect",
+      "path": "/admin/mt5-connect",
+      "method": "POST",
+      "status_code": 422,
+      "response_time": 2.0536065101623535,
+      "success": false,
+      "data": null
+    },
+    {
+      "name": "Universal MT5 Status",
+      "path": "/admin/mt5-universal-status",
+      "method": "GET",
+      "status_code": 200,
+      "response_time": 2.0784053802490234,
+      "success": true,
+      "data": {
+        "connected": false,
+        "message": "Universal MT5 not connected"
+      }
+    },
+    {
+      "name": "Universal MT5 Connect",
+      "path": "/admin/mt5-universal-connect",
+      "method": "POST",
+      "status_code": 0,
+      "response_time": 0,
+      "success": false,
+      "error": "HTTPConnectionPool(host='localhost', port=8000): Read timed out. (read timeout=10)"
+    }
+  ],
+  "integration_tests": [],
+  "start_time": "2026-03-07 07:46:51.183613",
+  "end_time": "2026-03-07 07:48:47.687785",
+  "duration": "0:01:56.504172",
+  "overall_status": {
+    "backend_healthy": false,
+    "frontend_accessible": false,
+    "api_success_rate": 75.0,
+    "mt5_connected": false,
+    "demo_trading_active": false,
+    "end_to_end_working": false,
+    "overall_score": 0.0
+  }
+}
