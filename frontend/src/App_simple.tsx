@@ -16,6 +16,8 @@ const SimpleDashboard: React.FC = () => {
     profit: 0
   });
 
+  const [tradeHistory, setTradeHistory] = React.useState<any[]>([]);
+
   // Poll MT5 status from backend (bridge-aware)
   React.useEffect(() => {
     const fetchStatus = async () => {
@@ -33,6 +35,22 @@ const SimpleDashboard: React.FC = () => {
     };
     fetchStatus();
     const interval = setInterval(fetchStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Poll trade history
+  React.useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const resp = await fetch('http://localhost:8000/trade/history');
+        const data = await resp.json();
+        setTradeHistory(data.history || []);
+      } catch {
+        // ignore
+      }
+    };
+    fetchHistory();
+    const interval = setInterval(fetchHistory, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -295,6 +313,30 @@ const SimpleDashboard: React.FC = () => {
         <div className="mt-12 text-center text-white/60">
           <p>Nexus Trading Intelligence Network - Professional Trading Platform</p>
           <p className="text-sm mt-2">Ready for Production Use • 500-Trade Demo System • Universal MT5 Integration</p>
+        </div>
+      </div>
+
+      {/* Trade History */}
+      <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20">
+        <h2 className="text-xl font-bold text-white mb-4">Trade History</h2>
+        <div className="space-y-2 max-h-64 overflow-y-auto">
+          {tradeHistory.length === 0 ? (
+            <p className="text-white/50">No trades yet.</p>
+          ) : (
+            tradeHistory.map((trade, idx) => (
+              <div key={idx} className="bg-black/30 rounded p-3 text-sm text-white">
+                <div className="flex justify-between">
+                  <span>{trade.symbol} {trade.action} {trade.volume}</span>
+                  <span className={trade.status === 'executed' ? 'text-green-400' : 'text-red-400'}>
+                    {trade.status}
+                  </span>
+                </div>
+                <div className="text-xs text-white/50 mt-1">
+                  ID: {trade.id} | Retcode: {trade.retcode}
+                </div>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

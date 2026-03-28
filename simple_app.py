@@ -326,6 +326,12 @@ def resonance_validate(symbol: str, intended_action: str) -> ResonanceResult:
     )
 
 
+@app.post("/debug/raw")
+async def debug_raw(request: dict):
+    """Debug raw request body"""
+    logger.info(f"[DEBUG_RAW] Received: {request}")
+    return {"received": request}
+
 @app.post("/trade")
 async def execute_trade(trade_request: TradeRequest):
     """Queue a real MT5 trade via the MQL5 bridge."""
@@ -906,6 +912,7 @@ class Config:
 # Store bridge commands and responses
 bridge_commands = deque()
 bridge_responses = []
+trade_history = []  # New: store order_result history for UI
 
 @app.get("/mt5/bridge/commands")
 async def get_bridge_commands():
@@ -915,6 +922,11 @@ async def get_bridge_commands():
         return {"command": None}
     cmd = bridge_commands.popleft()
     return cmd
+
+@app.get("/trade/history")
+async def get_trade_history():
+    """Get trade history (order_result records)"""
+    return {"history": trade_history}
 
 @app.post("/mt5/bridge/data")
 async def receive_bridge_data(data: Dict[str, Any]):
@@ -928,10 +940,11 @@ async def receive_bridge_data(data: Dict[str, Any]):
             app_state["mt5_server"] = data.get("server")
             app_state["last_bridge_heartbeat"] = time.time()
 
-        # Record order execution results from the EA
+        # Record order execution results from EA
         if isinstance(data, dict) and data.get("command") == "order_result":
             app_state["last_order_result"] = data
             app_state["trade_count"] = app_state.get("trade_count", 0) + 1
+            trade_history.append(data)  # Store for UI
             logger.info(f"✅ order_result received: {json.dumps(data, ensure_ascii=False)}")
 
         logger.info(f"[BRIDGE_DATA] {json.dumps(data, ensure_ascii=False)}")
