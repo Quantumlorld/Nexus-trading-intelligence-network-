@@ -16,11 +16,31 @@ const SimpleDashboard: React.FC = () => {
     profit: 0
   });
 
+  // Poll MT5 status from backend (bridge-aware)
+  React.useEffect(() => {
+    const fetchStatus = async () => {
+      try {
+        const resp = await fetch('http://localhost:8000/admin/mt5-status');
+        const data = await resp.json();
+        setMt5Status({
+          connected: !!data.connected,
+          loading: false,
+          message: data.message || 'Not Connected'
+        });
+      } catch {
+        setMt5Status(prev => ({ ...prev, loading: false }));
+      }
+    };
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   const handleConnectMT5 = async () => {
     setMt5Status(prev => ({ ...prev, loading: true, message: 'Connecting...' }));
     
     try {
-      const response = await fetch('http://localhost:8000/admin/mt5-connect?account=103969793&password=*d8qNgQq&server=MetaQuotes-Demo', {
+      const response = await fetch('http://localhost:8000/admin/mt5-connect-xm', {
         method: 'POST'
       });
       
@@ -120,13 +140,13 @@ const SimpleDashboard: React.FC = () => {
                 type="number"
                 placeholder="Account Number"
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50"
-                defaultValue="103969793"
+                defaultValue="5047475068"
               />
               <input
                 type="password"
                 placeholder="Password"
                 className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50"
-                defaultValue="*d8qNgQq"
+                defaultValue=""
               />
               <input
                 type="text"
@@ -139,7 +159,7 @@ const SimpleDashboard: React.FC = () => {
                 disabled={mt5Status.loading}
                 className="w-full bg-gradient-to-r from-green-400 to-emerald-400 text-white py-2 rounded-lg font-semibold hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50"
               >
-                {mt5Status.loading ? 'Connecting...' : 'Connect to MT5'}
+                {mt5Status.loading ? 'Connecting...' : 'Connect to XM Global MT5'}
               </button>
             </div>
           </div>

@@ -12,6 +12,7 @@ import random
 import time
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any
+from collections import deque
 from pydantic import BaseModel, Field
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
@@ -78,6 +79,12 @@ class TradeRequest(BaseModel):
     quantity: float = Field(..., gt=0, description="Trade quantity")
     order_type: str = Field(default="MARKET", description="MARKET or LIMIT")
     price: Optional[float] = Field(None, description="Entry price for limit orders")
+
+class ResonanceResult(BaseModel):
+    signal_3h: str
+    signal_6h: str
+    signal_9h: str
+    confidence: int
 
 # Global state
 app_state = {
@@ -276,45 +283,100 @@ async def get_candles(symbol: str, timeframe: str = "1h", limit: int = 100):
             timeframe=timeframe
         )
 
+def _normalize_symbol(symbol: str) -> str:
+    s = (symbol or "").strip()
+    if s.upper() in {"EURUSD", "EUR/USD"}:
+        return "EURUSD"
+    return s.replace("/", "")
+
+def _simple_timeframe_signal(timeframe: str, symbol: str) -> str:
+    sym = symbol
+    if timeframe == "9h":
+        candles = mock_9h_candles.get(sym, [])
+    else:
+        candles = mock_candles.get(sym, [])
+
+    if not candles:
+        return random.choice(["BUY", "SELL"])
+
+    first = candles[-1] if len(candles) == 1 else candles[0]
+    last = candles[-1]
+    try:
+        open_p = float(first.get("open", 0))
+        close_p = float(last.get("close", 0))
+    except Exception:
+        return random.choice(["BUY", "SELL"])
+
+    return "BUY" if close_p >= open_p else "SELL"
+
+def resonance_validate(symbol: str, intended_action: str) -> ResonanceResult:
+    signal_3h = _simple_timeframe_signal("3h", symbol)
+    signal_6h = _simple_timeframe_signal("6h", symbol)
+    signal_9h = _simple_timeframe_signal("9h", symbol)
+
+    intended = (intended_action or "").upper().strip()
+    aligned = (signal_3h == intended) and (signal_6h == intended) and (signal_9h == intended)
+    confidence = 90 if aligned else 50
+
+    return ResonanceResult(
+        signal_3h=signal_3h,
+        signal_6h=signal_6h,
+        signal_9h=signal_9h,
+        confidence=confidence,
+    )
+
+
 @app.post("/trade")
 async def execute_trade(trade_request: TradeRequest):
-    """Execute a trade"""
+    """Queue a real MT5 trade via the MQL5 bridge."""
     try:
         if not app_state["trading_enabled"]:
             raise HTTPException(status_code=403, detail="Trading is currently disabled")
-        
+
         if not app_state["broker_connected"]:
             raise HTTPException(status_code=503, detail="Broker is not connected")
-        
-        # Simulate trade execution
-        trade_id = f"TRADE_{int(datetime.utcnow().timestamp())}"
-        
-        # Simulate execution price with small slippage
-        base_price = 1.1000 if trade_request.symbol == "EUR/USD" else 45000
-        slippage = 0.0001 if trade_request.symbol == "EUR/USD" else 10
-        execution_price = base_price + (slippage if trade_request.action == "BUY" else -slippage)
-        
-        result = {
-            "success": True,
-            "trade_id": trade_id,
-            "symbol": trade_request.symbol,
-            "action": trade_request.action,
-            "quantity": trade_request.quantity,
+
+        action = (trade_request.action or "").upper().strip()
+        if action not in {"BUY", "SELL"}:
+            raise HTTPException(status_code=400, detail="Invalid action; must be BUY or SELL")
+
+        resonance = resonance_validate(trade_request.symbol, action)
+        if resonance.confidence < 80:
+            raise HTTPException(
+                status_code=409,
+                detail={
+                    "message": "Resonance validation failed",
+                    "resonance": resonance.model_dump(),
+                },
+            )
+
+        order_id = f"CMD_{int(datetime.utcnow().timestamp())}_{random.randint(1000,9999)}"
+        cmd = {
+            "command": "place_order",
+            "id": order_id,
+            "symbol": _normalize_symbol(trade_request.symbol),
+            "action": action,
+            "volume": float(trade_request.quantity),
             "order_type": trade_request.order_type,
-            "execution_price": execution_price,
-            "status": "FILLED",
-            "timestamp": datetime.utcnow().isoformat()
+            "price": trade_request.price,
+            "resonance": resonance.model_dump(),
+            "timestamp": time.time(),
         }
-        
-        logger.info(f"Trade executed: {trade_id} - {trade_request.symbol} {trade_request.action} {trade_request.quantity}")
-        
-        return result
-        
+        bridge_commands.append(cmd)
+
+        logger.info(f"Queued MT5 bridge command {order_id}: {cmd['symbol']} {action} {cmd['volume']}")
+        return {
+            "success": True,
+            "status": "QUEUED",
+            "command_id": order_id,
+            "command": cmd,
+        }
+
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Trade execution failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Trade execution failed: {str(e)}")
+        logger.error(f"Trade queue failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Trade queue failed: {str(e)}")
 
 @app.post("/admin/mt5-connect-xm")
 async def connect_mt5_xm():
@@ -528,6 +590,29 @@ async def connect_mt5(account: int, password: str, server: str):
 async def get_mt5_status():
     """Get MT5 connection status and account info"""
     try:
+        # Prefer MQL5 bridge connectivity over Python MT5 IPC connectivity
+        if app_state.get("broker_connected"):
+            last_hb = app_state.get("last_bridge_heartbeat")
+            hb_age_sec = None
+            if last_hb is not None:
+                try:
+                    hb_age_sec = time.time() - float(last_hb)
+                except Exception:
+                    hb_age_sec = None
+
+            return {
+                "connected": True,
+                "message": "MT5 connected via MQL5 bridge",
+                "bridge": True,
+                "server": app_state.get("mt5_server", "Unknown"),
+                "account": app_state.get("mt5_account", "Unknown"),
+                "demo_mode": app_state.get("demo_mode", False),
+                "trade_count": app_state.get("trade_count", 0),
+                "current_phase": app_state.get("current_phase", "baseline"),
+                "adaptive_learning": app_state.get("adaptive_learning", False),
+                "last_bridge_heartbeat_age_sec": hb_age_sec,
+            }
+
         if not mt5_connector.connected:
             return {
                 "connected": False, 
@@ -819,22 +904,37 @@ class Config:
     }
 
 # Store bridge commands and responses
-bridge_commands = []
+bridge_commands = deque()
 bridge_responses = []
 
 @app.get("/mt5/bridge/commands")
 async def get_bridge_commands():
-    """Get pending commands for MQL5 bridge"""
+    """Get ONE pending command for MQL5 bridge (FIFO queue)."""
     global bridge_commands
-    commands = bridge_commands.copy()
-    bridge_commands.clear()
-    return {"commands": commands}
+    if not bridge_commands:
+        return {"command": None}
+    cmd = bridge_commands.popleft()
+    return cmd
 
 @app.post("/mt5/bridge/data")
 async def receive_bridge_data(data: Dict[str, Any]):
     """Receive data from MQL5 bridge"""
     global bridge_responses
     try:
+        # Update connection state from bridge heartbeats
+        if isinstance(data, dict) and data.get("command") == "account_info":
+            app_state["broker_connected"] = True
+            app_state["mt5_account"] = data.get("login")
+            app_state["mt5_server"] = data.get("server")
+            app_state["last_bridge_heartbeat"] = time.time()
+
+        # Record order execution results from the EA
+        if isinstance(data, dict) and data.get("command") == "order_result":
+            app_state["last_order_result"] = data
+            app_state["trade_count"] = app_state.get("trade_count", 0) + 1
+            logger.info(f"✅ order_result received: {json.dumps(data, ensure_ascii=False)}")
+
+        logger.info(f"[BRIDGE_DATA] {json.dumps(data, ensure_ascii=False)}")
         bridge_responses.append(data)
         return {"success": True}
     except Exception as e:
@@ -847,7 +947,7 @@ async def get_bridge_responses():
     global bridge_responses
     responses = bridge_responses.copy()
     bridge_responses.clear()
-    return responses
+    return {"responses": responses}
 
 @app.post("/mt5/bridge/command")
 async def send_bridge_command(command: BridgeCommand):
