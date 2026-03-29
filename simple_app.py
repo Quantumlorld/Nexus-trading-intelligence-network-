@@ -923,6 +923,51 @@ async def get_bridge_commands():
     cmd = bridge_commands.popleft()
     return cmd
 
+@app.post("/admin/demo/batch-500")
+async def start_batch_500():
+    """Start a 500-trade batch demo"""
+    try:
+        # Generate 500 random trade signals
+        symbols = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD", "BTC/USD"]
+        actions = ["BUY", "SELL"]
+        
+        batch_id = f"BATCH_{int(datetime.utcnow().timestamp())}"
+        queued = 0
+        
+        for i in range(500):
+            symbol = random.choice(symbols)
+            action = random.choice(actions)
+            quantity = round(random.uniform(0.01, 0.1), 2)
+            
+            # Queue via bridge
+            cmd = {
+                "command": "place_order",
+                "id": f"{batch_id}_{i}",
+                "symbol": _normalize_symbol(symbol),
+                "action": action,
+                "volume": quantity,
+                "order_type": "MARKET",
+                "batch_id": batch_id,
+                "timestamp": time.time()
+            }
+            bridge_commands.append(cmd)
+            queued += 1
+            
+            # Small delay to avoid overwhelming
+            if i % 50 == 0:
+                await asyncio.sleep(0.1)
+        
+        logger.info(f"🚀 Batch {batch_id}: Queued {queued} trades for demo")
+        return {
+            "success": True,
+            "batch_id": batch_id,
+            "queued": queued,
+            "message": f"Queued {queued} trades for batch demo"
+        }
+    except Exception as e:
+        logger.error(f"Batch demo failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Batch demo failed: {str(e)}")
+
 @app.get("/trade/history")
 async def get_trade_history():
     """Get trade history (order_result records)"""
