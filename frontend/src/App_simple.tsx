@@ -9,11 +9,20 @@ const SimpleDashboard: React.FC = () => {
   });
 
   const [tradeHistory, setTradeHistory] = React.useState<any[]>([]);
-  const [batchStatus, setBatchStatus] = React.useState({
+  const [batchStatus, setBatchStatus] = React.useState<{
+    running: boolean;
+    batchId: string | null;
+    queued: number;
+    executed: number;
+    failed: number;
+    processed: number;
+  }>({
     running: false,
     batchId: null,
     queued: 0,
-    executed: 0
+    executed: 0,
+    failed: 0,
+    processed: 0
   });
 
   // Poll MT5 status from backend (bridge-aware)
@@ -53,10 +62,17 @@ const SimpleDashboard: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Update executed count from trade history
+  // Update batch progress from trade history
   React.useEffect(() => {
-    const executedFromHistory = tradeHistory.filter(t => t.status === 'executed').length;
-    setBatchStatus(prev => ({ ...prev, executed: executedFromHistory }));
+    const executed = tradeHistory.filter(t => t.status === 'executed').length;
+    const failed = tradeHistory.filter(t => t.status === 'failed').length;
+    const processed = tradeHistory.length;
+    setBatchStatus(prev => ({
+      ...prev,
+      processed,
+      executed,
+      failed
+    }));
   }, [tradeHistory]);
 
   const handleConnectMT5 = async () => {
@@ -92,7 +108,7 @@ const SimpleDashboard: React.FC = () => {
   };
 
   const handleStartBatch = async () => {
-    setBatchStatus(prev => ({ ...prev, running: true, queued: 0, executed: 0 }));
+    setBatchStatus(prev => ({ ...prev, running: true, queued: 0, executed: 0, failed: 0, processed: 0 }));
     
     try {
       const response = await fetch('http://localhost:8000/admin/demo/batch-500', {
@@ -106,7 +122,9 @@ const SimpleDashboard: React.FC = () => {
           running: true,
           batchId: data.batch_id,
           queued: data.queued,
-          executed: 0
+          executed: 0,
+          failed: 0,
+          processed: 0
         });
       }
     } catch (error) {
@@ -369,13 +387,21 @@ const SimpleDashboard: React.FC = () => {
                       <div className="text-orange-300 font-mono">{batchStatus.queued}</div>
                     </div>
                     <div>
+                      <span className="text-gray-400">Processed</span>
+                      <div className="text-orange-300 font-mono">{batchStatus.processed}</div>
+                    </div>
+                    <div>
                       <span className="text-gray-400">Executed</span>
                       <div className="text-orange-300 font-mono">{batchStatus.executed}</div>
                     </div>
                     <div>
+                      <span className="text-gray-400">Failed</span>
+                      <div className="text-orange-300 font-mono">{batchStatus.failed}</div>
+                    </div>
+                    <div>
                       <span className="text-gray-400">Progress</span>
                       <div className="text-orange-300 font-mono">
-                        {batchStatus.queued > 0 ? Math.round((batchStatus.executed / batchStatus.queued) * 100) : 0}%
+                        {batchStatus.queued > 0 ? Math.round((batchStatus.processed / batchStatus.queued) * 100) : 0}%
                       </div>
                     </div>
                   </div>

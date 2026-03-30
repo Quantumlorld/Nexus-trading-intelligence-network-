@@ -925,19 +925,32 @@ async def get_bridge_commands():
 
 @app.post("/admin/demo/batch-500")
 async def start_batch_500():
-    """Start a 500-trade batch demo"""
+    """Start a 500-trade batch demo with configurable symbols and rate limiting"""
     try:
-        # Generate 500 random trade signals
-        symbols = ["EUR/USD", "GBP/USD", "USD/JPY", "XAU/USD", "BTC/USD"]
-        actions = ["BUY", "SELL"]
+        # XM-safe symbols with common suffixes
+        symbol_map = {
+            "EURUSD": ["EURUSD", "EURUSDm", "EURUSD."],
+            "GBPUSD": ["GBPUSD", "GBPUSDm", "GBPUSD."],
+            "USDJPY": ["USDJPY", "USDJPYm", "USDJPY."],
+            "XAUUSD": ["XAUUSD", "GOLD", "XAUUSDm", "XAUUSD."],
+            "BTCUSD": ["BTCUSD", "BTCUSDm", "BTCUSD."]
+        }
         
+        base_symbols = list(symbol_map.keys())
         batch_id = f"BATCH_{int(datetime.utcnow().timestamp())}"
         queued = 0
         
         for i in range(500):
-            symbol = random.choice(symbols)
-            action = random.choice(actions)
+            # Pick base symbol
+            base = random.choice(base_symbols)
+            # Pick one of the possible symbol names for that base
+            symbol = random.choice(symbol_map[base])
+            action = random.choice(["BUY", "SELL"])
             quantity = round(random.uniform(0.01, 0.1), 2)
+            
+            # Rate limiting: small delay every 50 trades
+            if i % 50 == 0 and i > 0:
+                await asyncio.sleep(0.2)
             
             # Queue via bridge
             cmd = {
@@ -952,17 +965,14 @@ async def start_batch_500():
             }
             bridge_commands.append(cmd)
             queued += 1
-            
-            # Small delay to avoid overwhelming
-            if i % 50 == 0:
-                await asyncio.sleep(0.1)
         
-        logger.info(f"🚀 Batch {batch_id}: Queued {queued} trades for demo")
+        logger.info(f"🚀 Batch {batch_id}: Queued {queued} XM-safe trades")
         return {
             "success": True,
             "batch_id": batch_id,
             "queued": queued,
-            "message": f"Queued {queued} trades for batch demo"
+            "symbols_used": base_symbols,
+            "message": f"Queued {queued} XM-safe trades for batch demo"
         }
     except Exception as e:
         logger.error(f"Batch demo failed: {e}")
@@ -972,6 +982,14 @@ async def start_batch_500():
 async def get_trade_history():
     """Get trade history (order_result records)"""
     return {"history": trade_history}
+
+@app.get("/debug/latest-bridge")
+async def debug_latest_bridge():
+    """Return latest bridge data for debugging"""
+    global bridge_responses
+    if bridge_responses:
+        return bridge_responses[-1]  # Last heartbeat
+    return {"message": "No bridge data yet"}
 
 @app.post("/mt5/bridge/data")
 async def receive_bridge_data(data: Dict[str, Any]):
